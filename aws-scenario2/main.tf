@@ -1,8 +1,15 @@
-# sets which cloud provider to use
-provider "aws" {                                                                    #AWS provider for account access
-  shared_credentials_file = "./aws-credentials"                      #Path to aws credentials file that has the iam user key to access aws services
-  profile = "terraform-user"                                                      #Name of the profile that the iam key can be found under. User has to already be existing
-  region = "us-east-1"                                                            #Region terraform will be building in
+# sets aws provider
+provider "aws" {
+  #Path to aws credentials file that has the iam user key to access aws services
+  shared_credentials_file = "./aws-credentials"
+  #Name of the profile that the iam key can be found under. User has to already be existing
+  profile = "terraform-user"
+  region = "us-east-1"
+}
+
+# docker provider
+provider "docker" {
+  host = "tcp://127.0.0.1:2376/"
 }
 
 # creates a vpc for a public and private subnets
@@ -186,6 +193,7 @@ resource "aws_instance" "scenario2-ec2" {
   associate_public_ip_address = "true"
   security_groups = ["${aws_security_group.webserversg.id}"]
   subnet_id = "${aws_subnet.public-subnet1.id}"
+  count = "${var.number_of_ec2_instances}"
 }
 
 # creates an rds instance in a private subnet
