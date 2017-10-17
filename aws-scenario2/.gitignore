@@ -1,0 +1,6 @@
+.terraform/
+aws-config
+aws-credentials
+terraform.tfstate
+terraform.tfstate.backup
+whitelist_ip.tfvars
