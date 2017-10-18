@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # checks that the correct number of variables have been passed
-if [ "$#" -ne 1 ]; then
-    echo "The EC2 instance count parameter was not given.  Please specify the number of instances to launch."
+if [ "$#" -ne 3 ]; then
+    echo "The number of parameters given doesn't match the required amount. You must specify the number of ec2 instances, a key pair name, and the path to the private key."
 else
     # gets local ip to pass as a variable to terraform
     myip=$(dig +short myip.opendns.com @resolver1.opendns.com)
@@ -11,8 +11,14 @@ else
     echo 'Your CIDR block is' $mycidr
     sed "s|my_local_ip|$mycidr|" input_vars.md > whitelist_ip.md
 
-    # passes input parameters to terraform variables file
-    sed "s|ec2_count|$1|" whitelist_ip.md > runtime_vars.tfvars
+    # passes instance count input parameter to terraform variables file
+    sed "s|ec2_count|$1|" whitelist_ip.md > keypair.md
+
+    # passes keypair name input parameter to terraform variables file
+    sed "s|scenario2-keypair|$2|" keypair.md > keypath.md
+
+    # passes private key path input parameter to terraform variables file
+    sed "s|path_to_private_key|$3|" keypath.md > runtime_vars.tfvars
 
     # series of command to run terraform
     terraform init

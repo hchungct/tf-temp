@@ -1,5 +1,5 @@
 REQUIREMENTS:
-- An AWS account
+- An AWS account with an IAM user and EC2 keypair
 - Terraform (v0.10.6 recommended)
 
 
@@ -23,7 +23,9 @@ replace <iam_access_key> and  <iam_secret_key> with the proper values
 TO RUN:
 To get this to work, run the script and provide a number for the number for EC2 instances to create:
 
-  ./tf-build.sh <number_of_instances_to_build>
+  ./tf-build.sh <number_of_instances_to_build> <name_of_keypair> <path_to_private_key>
+
+  e.g. ./tf-build.sh 2 scenario2 /usr/local/scenario2.pem
 
 The tf-build.sh script will get the public ip of the machine running the script.
 Which will be passed as a variable to terraform.

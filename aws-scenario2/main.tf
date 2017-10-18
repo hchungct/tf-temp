@@ -7,11 +7,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# docker provider
-provider "docker" {
-  host = "tcp://127.0.0.1:2376/"
-}
-
 # creates a vpc for a public and private subnets
 resource "aws_vpc" "scenario2-vpc" {
   cidr_block = "10.0.0.0/16"       
@@ -112,8 +107,8 @@ resource "aws_security_group" "webserversg" {
 
   # ssh access from my ip
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["${var.myip}"]
   }
@@ -194,6 +189,35 @@ resource "aws_instance" "scenario2-ec2" {
   security_groups = ["${aws_security_group.webserversg.id}"]
   subnet_id = "${aws_subnet.public-subnet1.id}"
   count = "${var.number_of_ec2_instances}"
+  # the provisioner will install docker on the instance and then start the hello-world container
+  provisioner "remote-exec" {
+    inline = [
+      "sudo yum update -y", 
+      "sudo yum install -y docker",
+      "sudo service docker start",
+      "sudo docker run -d -p 80:5000 training/webapp:latest python app.py"
+    ]
+    connection {
+      type     = "ssh"
+      user     = "${var.ssh_user}"
+      private_key = "${file("${var.key_path}")}"
+      timeout  = "4m"
+    }
+  }
+  key_name = "${var.keypair_name}"
+}
+
+# docker provider
+provider "docker" {
+}
+
+resource "docker_container" "hw" {
+  image = "${docker_image.hello-world.latest}"
+  name  = "helloworld"
+}
+
+resource "docker_image" "hello-world" {
+  name = "training/webapp:latest"
 }
 
 # creates an rds instance in a private subnet

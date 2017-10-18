@@ -3,7 +3,8 @@ aws-config
 aws-credentials
 terraform.tfstate
 terraform.tfstate.backup
-whitelist_ip.tfvars
 whitelist_ip.md
+keypair.md
+keypath.md
 runtime_vars.tfvars
 sc2-build
