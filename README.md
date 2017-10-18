@@ -29,7 +29,9 @@ To get this to work, run the script and provide a number for the number for EC2 
 
 The tf-build.sh script will get the public ip of the machine running the script.
 Which will be passed as a variable to terraform.
-Then it'll initialize terraform and get any modules, if applicable, followed by planing and building out Scenario 2
+Then it'll initialize terraform and get any modules, if applicable, followed by planing and building out Scenario 2.
+
+Once the build is complete, putting the instance IP in an internet browser should bring up "Hello world!"
 
 
 CLEAN UP:
